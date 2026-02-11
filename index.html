@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>TRIPLE LOYD 1</title>
+<style>
+body{
+  font-family:Arial, sans-serif;
+  background:#f2f2f2;
+}
+.container{
+  max-width:800px;
+  margin:40px auto;
+  background:white;
+  padding:25px;
+  border-radius:12px;
+  box-shadow:0 0 10px rgba(0,0,0,0.2);
+}
+h1{text-align:center;}
+#timer{
+  text-align:center;
+  font-size:22px;
+  margin-bottom:15px;
+}
+img{
+  width:100%;
+  max-height:350px;
+  object-fit:contain;
+}
+input{
+  width:100%;
+  padding:8px;
+  margin:6px 0;
+}
+button{
+  padding:10px 18px;
+  margin-top:15px;
+}
+.hidden{display:none;}
+</style>
+</head>
+<body>
+
+<div class="container">
+<h1>TRIPLE LOYD 1</h1>
+<div id="timer">120:00</div>
+
+<!-- INICIO -->
+<div id="startScreen">
+<p>Nombre del estudiante:</p>
+<input type="text" id="studentName">
+<button onclick="startQuiz()">Comenzar</button>
+</div>
+
+<!-- TEST -->
+<div id="quizScreen" class="hidden">
+<h3 id="questionNumber"></h3>
+<img id="questionImage">
+<p><b>A.</b> Casilla donde el rey negro está en mate:</p>
+<input id="ansA">
+
+<p><b>B.</b> Casilla donde el rey negro está ahogado:</p>
+<input id="ansB">
+
+<p><b>C.</b> Casilla donde las blancas dan mate en 1:</p>
+<input id="ansC">
+
+<button onclick="nextQuestion()">Siguiente</button>
+</div>
+
+<!-- RESULTADOS -->
+<div id="resultScreen" class="hidden">
+<h2>Resultados</h2>
+<p id="finalName"></p>
+<p id="finalScore"></p>
+
+<p style="font-weight:bold">Seleccione todo el texto del resultado, copie y envíe al correo quizacademiamillennials@gmail.com</p>
+
+<div id="review"></div>
+</div>
+
+</div>
+
+<script>
+
+/***************
+ EDITAR AQUI
+****************/
+
+const questions = [
+
+{
+ image:"img/p20.png",
+ mate:"c8",
+ ahogado:"a8",
+ mate1:"e8"
+},
+
+{
+ image:"img/p25.png",
+ mate:"h1",
+ ahogado:"a1",
+ mate1:"d1"
+},
+
+{
+ image:"img/p31.png",
+ mate:"h3",
+ ahogado:"h1",
+ mate1:"d8"
+},
+
+
+{
+ image:"img/p36.png",
+ mate:"a8",
+ ahogado:"c8",
+ mate1:"e8"
+},
+
+{
+ image:"img/p41.png",
+ mate:"c8",
+ ahogado:"a8",
+ mate1:"h1"
+},
+
+{
+ image:"img/p46.png",
+ mate:"h6",
+ ahogado:"a1",
+ mate1:"f8"
+},
+
+{
+ image:"img/p51.png",
+ mate:"h4",
+ ahogado:"h2",
+ mate1:"e5"
+},
+
+
+{
+ image:"img/p57.png",
+ mate:"h6",
+ ahogado:"h8",
+ mate1:"f8"
+},
+
+{
+ image:"img/p62.png",
+ mate:"h1",
+ ahogado:"a6",
+ mate1:"h3"
+},
+
+{
+ image:"img/p68.png",
+ mate:"d6",
+ ahogado:"f8",
+ mate1:"d8"
+},
+
+{
+ image:"img/p74.png",
+ mate:"c6",
+ ahogado:"a8",
+ mate1:"e1"
+},
+
+{
+ image:"img/80.png",
+ mate:"a3",
+ ahogado:"e1",
+ mate1:"c5"
+}
+
+];
+
+/****************/
+
+let currentQuestion=0;
+let answers=[];
+let time=7200;
+let timer;
+let student="";
+
+function normalize(t){
+ return t.toLowerCase().trim();
+}
+
+function startQuiz(){
+ student=document.getElementById("studentName").value;
+ if(student===""){
+  alert("Ingrese su nombre");
+  return;
+ }
+ document.getElementById("startScreen").classList.add("hidden");
+ document.getElementById("quizScreen").classList.remove("hidden");
+ startTimer();
+ loadQuestion();
+}
+
+function startTimer(){
+ timer=setInterval(()=>{
+  time--;
+  let m=Math.floor(time/60);
+  let s=time%60;
+  document.getElementById("timer").innerText=
+   `${m}:${s.toString().padStart(2,'0')}`;
+  if(time<=0) finishQuiz();
+ },1000);
+}
+
+function loadQuestion(){
+ let q=questions[currentQuestion];
+ document.getElementById("questionNumber").innerText=
+  `Problema ${currentQuestion+1} de ${questions.length}`;
+ document.getElementById("questionImage").src=q.image;
+ document.getElementById("ansA").value="";
+ document.getElementById("ansB").value="";
+ document.getElementById("ansC").value="";
+}
+
+function nextQuestion(){
+ let a=document.getElementById("ansA").value;
+ let b=document.getElementById("ansB").value;
+ let c=document.getElementById("ansC").value;
+
+ if(a===""||b===""||c===""){
+  alert("Complete las tres respuestas");
+  return;
+ }
+
+ answers[currentQuestion]={A:a,B:b,C:c};
+ currentQuestion++;
+
+ if(currentQuestion>=questions.length){
+  finishQuiz();
+ }else{
+  loadQuestion();
+ }
+}
+
+function finishQuiz(){
+ clearInterval(timer);
+
+ let score=0;
+
+ questions.forEach((q,i)=>{
+  if(normalize(q.mate)==normalize(answers[i].A)) score++;
+  if(normalize(q.ahogado)==normalize(answers[i].B)) score++;
+  if(normalize(q.mate1)==normalize(answers[i].C)) score++;
+ });
+
+ let total=questions.length*3;
+
+ document.getElementById("quizScreen").classList.add("hidden");
+ document.getElementById("resultScreen").classList.remove("hidden");
+
+ document.getElementById("finalName").innerText="Nombre: "+student;
+ document.getElementById("finalScore").innerText=
+  `Puntaje: ${score} / ${total}`;
+
+ let review=document.getElementById("review");
+ review.innerHTML="";
+
+ let email=`Nombre: ${student}\nPuntaje: ${score}/${total}\n\n`;
+
+ questions.forEach((q,i)=>{
+  let rA=normalize(q.mate)==normalize(answers[i].A);
+  let rB=normalize(q.ahogado)==normalize(answers[i].B);
+  let rC=normalize(q.mate1)==normalize(answers[i].C);
+
+  review.innerHTML+=`<p><b>Problema ${i+1}</b><br>
+  A: ${rA?"Correcta":"Incorrecta"}<br>
+  B: ${rB?"Correcta":"Incorrecta"}<br>
+  C: ${rC?"Correcta":"Incorrecta"}</p>`;
+
+  email+=`Problema ${i+1}\n`;
+  email+=`A alumno: ${answers[i].A} | correcta: ${q.mate}\n`;
+  email+=`B alumno: ${answers[i].B} | correcta: ${q.ahogado}\n`;
+  email+=`C alumno: ${answers[i].C} | correcta: ${q.mate1}\n\n`;
+ });
+
+ let subject="Resultados Triple Loyd";
+ window.location.href=
+  "mailto:quizacademiamillennials@gmail.com"+
+  `?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(email)}`;
+}
+
+</script>
+
+</body>
+</html>
