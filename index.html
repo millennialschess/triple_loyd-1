@@ -3,40 +3,188 @@
 <head>
 <meta charset="UTF-8">
 <title>TRIPLE LOYD 1</title>
+
+<!-- AÑADIDO: viewport para responsive -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+
 <style>
+/* ESTILOS EXISTENTES + MEJORAS RESPONSIVE */
 body{
   font-family:Arial, sans-serif;
   background:#f2f2f2;
+  margin: 0;
+  padding: 10px;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
 }
 .container{
   max-width:800px;
-  margin:40px auto;
+  margin:20px auto;
   background:white;
-  padding:25px;
+  padding:20px;
   border-radius:12px;
   box-shadow:0 0 10px rgba(0,0,0,0.2);
+  width: 100%;
 }
-h1{text-align:center;}
+h1{
+  text-align:center;
+  font-size: clamp(1.2rem, 6vw, 2rem);
+  word-break: break-word;
+}
 #timer{
   text-align:center;
-  font-size:22px;
+  font-size: clamp(20px, 6vw, 22px);
   margin-bottom:15px;
+  font-weight: bold;
+  background: #34495e;
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  max-width: 200px;
+  margin-left: auto;
+  margin-right: auto;
 }
 img{
   width:100%;
   max-height:350px;
   object-fit:contain;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #f9f9f9;
 }
-input{
+input[type=text]{
   width:100%;
-  padding:8px;
-  margin:6px 0;
+  padding:10px;
+  font-size:16px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  margin: 5px 0 10px;
+  box-sizing: border-box;
 }
+
+/* NUEVOS ESTILOS PARA INPUTS PEQUEÑOS */
+.small-input-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin: 10px 0 20px;
+  justify-content: space-between;
+}
+
+.small-input-item {
+  flex: 0 0 calc(33.33% - 15px);
+  min-width: 120px;
+}
+
+.small-input-item p {
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #2c3e50;
+  font-size: clamp(14px, 3.5vw, 16px);
+}
+
+.small-input-item input {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 14px;
+  text-align: center;
+  text-transform: lowercase;
+  border: 2px solid #3498db;
+  border-radius: 6px;
+  background: #f8f9fa;
+}
+
+.small-input-item input:focus {
+  outline: none;
+  border-color: #2980b9;
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+}
+
 button{
-  padding:10px 18px;
+  padding:14px 20px;
   margin-top:15px;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.3s;
+}
+button:hover{
+  background: #2980b9;
 }
 .hidden{display:none;}
+
+/* MEJORAS PARA PANTALLA DE RESULTADOS */
+#resultScreen{
+  padding: 10px;
+}
+#resultScreen h2{
+  font-size: clamp(1.3rem, 5vw, 2rem);
+  margin-bottom: 15px;
+}
+#resultScreen h3{
+  font-size: clamp(16px, 5vw, 20px);
+  margin: 20px 0 10px;
+  color: #2c3e50;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 5px;
+}
+#review{
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  background: #f9f9f9;
+}
+#review p{
+  padding: 8px;
+  margin: 5px 0;
+  border-radius: 5px;
+  font-size: clamp(13px, 3.5vw, 15px);
+  word-break: break-word;
+}
+#finalName, #finalScore{
+  font-size: clamp(16px, 5vw, 18px);
+  padding: 5px 0;
+  font-weight: bold;
+}
+#finalScore{
+  color: #27ae60;
+  border-bottom: 2px solid #27ae60;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+/* NUEVO BOTÓN PARA REINICIAR */
+#newTestBtn{
+  background: #2ecc71;
+  margin-top: 20px;
+}
+#newTestBtn:hover{
+  background: #27ae60;
+}
+
+/* MEJORAS TÁCTILES PARA MÓVIL */
+@media (max-width: 600px){
+  .container{
+    padding: 15px;
+  }
+  button{
+    padding: 16px 20px;
+  }
+  .small-input-item {
+    flex: 0 0 100%;
+  }
+  #review{
+    max-height: 250px;
+  }
+}
 </style>
 </head>
 <body>
@@ -48,7 +196,7 @@ button{
 <!-- INICIO -->
 <div id="startScreen">
 <p>Nombre del estudiante:</p>
-<input type="text" id="studentName">
+<input type="text" id="studentName" placeholder="Ej: Juan Pérez">
 <button onclick="startQuiz()">Comenzar</button>
 </div>
 
@@ -56,14 +204,23 @@ button{
 <div id="quizScreen" class="hidden">
 <h3 id="questionNumber"></h3>
 <img id="questionImage">
-<p><b>A.</b> Casilla donde el rey negro está en mate:</p>
-<input id="ansA">
 
-<p><b>B.</b> Casilla donde el rey negro está ahogado:</p>
-<input id="ansB">
-
-<p><b>C.</b> Casilla donde las blancas dan mate en 1:</p>
-<input id="ansC">
+<div class="small-input-container">
+  <div class="small-input-item">
+    <p><b>A.</b> Rey negro en mate:</p>
+    <input id="ansA" placeholder="Ej: c8" maxlength="3">
+  </div>
+  
+  <div class="small-input-item">
+    <p><b>B.</b> Rey negro ahogado:</p>
+    <input id="ansB" placeholder="Ej: a8" maxlength="3">
+  </div>
+  
+  <div class="small-input-item">
+    <p><b>C.</b> Blancas dan mate en 1:</p>
+    <input id="ansC" placeholder="Ej: e8" maxlength="3">
+  </div>
+</div>
 
 <button onclick="nextQuestion()">Siguiente</button>
 </div>
@@ -74,9 +231,11 @@ button{
 <p id="finalName"></p>
 <p id="finalScore"></p>
 
-<p style="font-weight:bold">Seleccione todo el texto del resultado, copie y envíe al correo quizacademiamillennials@gmail.com</p>
-
+<h3>Detalle por problema</h3>
 <div id="review"></div>
+
+<!-- Botón para hacer otro test -->
+<button id="newTestBtn" onclick="startNewTest()">📝 Realizar otro test</button>
 </div>
 
 </div>
@@ -202,14 +361,19 @@ function startQuiz(){
 }
 
 function startTimer(){
+ updateTimer();
  timer=setInterval(()=>{
   time--;
-  let m=Math.floor(time/60);
-  let s=time%60;
-  document.getElementById("timer").innerText=
-   `${m}:${s.toString().padStart(2,'0')}`;
+  updateTimer();
   if(time<=0) finishQuiz();
  },1000);
+}
+
+function updateTimer(){
+ let m=Math.floor(time/60);
+ let s=time%60;
+ document.getElementById("timer").innerText=
+  `${m}:${s.toString().padStart(2,'0')}`;
 }
 
 function loadQuestion(){
@@ -242,6 +406,9 @@ function nextQuestion(){
  }
 }
 
+// ==================================================
+// FUNCIÓN MODIFICADA: Eliminado el envío por email
+// ==================================================
 function finishQuiz(){
  clearInterval(timer);
 
@@ -255,38 +422,84 @@ function finishQuiz(){
 
  let total=questions.length*3;
 
+ // Ocultar quiz, mostrar resultados
  document.getElementById("quizScreen").classList.add("hidden");
  document.getElementById("resultScreen").classList.remove("hidden");
 
- document.getElementById("finalName").innerText="Nombre: "+student;
+ document.getElementById("finalName").innerText="👤 Nombre: "+student;
  document.getElementById("finalScore").innerText=
-  `Puntaje: ${score} / ${total}`;
+  `✅ Puntaje: ${score} / ${total} (${Math.round(score/total*100)}%)`;
 
  let review=document.getElementById("review");
  review.innerHTML="";
-
- let email=`Nombre: ${student}\nPuntaje: ${score}/${total}\n\n`;
 
  questions.forEach((q,i)=>{
   let rA=normalize(q.mate)==normalize(answers[i].A);
   let rB=normalize(q.ahogado)==normalize(answers[i].B);
   let rC=normalize(q.mate1)==normalize(answers[i].C);
-
-  review.innerHTML+=`<p><b>Problema ${i+1}</b><br>
-  A: ${rA?"Correcta":"Incorrecta"}<br>
-  B: ${rB?"Correcta":"Incorrecta"}<br>
-  C: ${rC?"Correcta":"Incorrecta"}</p>`;
-
-  email+=`Problema ${i+1}\n`;
-  email+=`A alumno: ${answers[i].A} | correcta: ${q.mate}\n`;
-  email+=`B alumno: ${answers[i].B} | correcta: ${q.ahogado}\n`;
-  email+=`C alumno: ${answers[i].C} | correcta: ${q.mate1}\n\n`;
+  
+  let div = document.createElement("div");
+  div.style.padding = "12px";
+  div.style.margin = "8px 0";
+  div.style.borderRadius = "8px";
+  div.style.background = "#f8f9fa";
+  div.style.border = "1px solid #ddd";
+  
+  div.innerHTML = `
+    <strong style="font-size: 1.1em; color: #2c3e50">Problema ${i+1}</strong><br>
+    <span style="display: flex; justify-content: space-between; margin-top: 8px;">
+      <span style="flex: 1"><b>A:</b> <span style="color: ${rA ? '#27ae60' : '#e74c3c'}">${answers[i].A}</span> ${rA ? '✅' : '❌'}</span>
+      <span style="flex: 1"><b>B:</b> <span style="color: ${rB ? '#27ae60' : '#e74c3c'}">${answers[i].B}</span> ${rB ? '✅' : '❌'}</span>
+      <span style="flex: 1"><b>C:</b> <span style="color: ${rC ? '#27ae60' : '#e74c3c'}">${answers[i].C}</span> ${rC ? '✅' : '❌'}</span>
+    </span>
+    <span style="font-size: 0.9em; color: #7f8c8d; display: block; margin-top: 5px;">
+      Correctas: A:${q.mate} | B:${q.ahogado} | C:${q.mate1}
+    </span>
+  `;
+  
+  review.appendChild(div);
  });
 
- let subject="Resultados Triple Loyd";
- window.location.href=
-  "mailto:quizacademiamillennials@gmail.com"+
-  `?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(email)}`;
+ // Mostrar tiempo utilizado
+ let timeUsed = 7200 - time;
+ let minutes = Math.floor(timeUsed / 60);
+ let seconds = timeUsed % 60;
+ let timeInfo = document.createElement("p");
+ timeInfo.style.marginTop = "20px";
+ timeInfo.style.padding = "12px";
+ timeInfo.style.background = "#e2e3e5";
+ timeInfo.style.borderRadius = "8px";
+ timeInfo.style.textAlign = "center";
+ timeInfo.style.fontWeight = "bold";
+ timeInfo.style.fontSize = "1.1em";
+ timeInfo.style.color = "#383d41";
+ timeInfo.style.border = "1px solid #d6d8db";
+ timeInfo.innerText = `⏱️ Tiempo empleado: ${minutes}:${seconds.toString().padStart(2,'0')}`;
+ 
+ review.appendChild(timeInfo);
+}
+
+// NUEVA FUNCIÓN: Reiniciar el test
+function startNewTest(){
+  // Reiniciar variables
+  currentQuestion = 0;
+  answers = [];
+  time = 7200;
+  student = "";
+  
+  // Limpiar campos
+  document.getElementById("studentName").value = "";
+  document.getElementById("ansA").value = "";
+  document.getElementById("ansB").value = "";
+  document.getElementById("ansC").value = "";
+  
+  // Cambiar pantallas
+  document.getElementById("resultScreen").classList.add("hidden");
+  document.getElementById("startScreen").classList.remove("hidden");
+  
+  // Reiniciar timer
+  clearInterval(timer);
+  updateTimer();
 }
 
 </script>
